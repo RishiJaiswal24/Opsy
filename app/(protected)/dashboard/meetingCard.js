@@ -6,10 +6,13 @@ import { Presentation, Upload } from 'lucide-react'
 import React, { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { uploadFiles } from '@/lib/upload'
+import { uploadToCloudinary } from '@/lib/uploadCloudinary'
 
 const MeetingCard = () => {
     const [progress, setProgress] = useState(0)
     const [isUplaoding, setIsUplaoding] = useState(false)
+    const [url, setUrl] = useState("")
+
     const { getRootProps, getInputProps } = useDropzone({
         accept: { "audio/*": [".mp3", ".wav", ".m4a"] },
         multiple: false,
@@ -23,8 +26,9 @@ const MeetingCard = () => {
             setProgress(0);
 
             try {
-                const url = await uploadFiles(file, setProgress);
-                console.log("Uploaded file URL:", url);
+                const uploadedURL = await uploadToCloudinary(file, setProgress);
+                setUrl(uploadedURL);
+                console.log("Uploaded file URL:", uploadedURL);
             } catch (err) {
                 console.error(err);
             } finally {
