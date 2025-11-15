@@ -5,6 +5,8 @@ import Project from "../models/Project"
 import { auth } from "@clerk/nextjs/server"
 import Commit from "../models/Commit"
 import Question from "../models/Question"
+import Meetings from "../models/Meetings"
+import { connect } from "mongoose"
 
 export const saveQuestion = async ({ projectId, question, answers, fileRefrenced }) => {
     const { userId } = await auth();
@@ -35,6 +37,64 @@ export const saveQuestion = async ({ projectId, question, answers, fileRefrenced
             success: false,
             message: error.message || "Failed to save question."
         };
+    }
+}
+
+// for meeitngs
+
+export const deleteMeeting=async (MeetingsId)=>{
+    await connectDB()
+    await Meetings.deleteOne({MeetingsId})
+}
+
+export const saveMeeting = async (projectId, meetingUrl, name) => {
+    const { userId } = await auth();
+    try {
+        await connectDB()
+        if (!userId) {
+            throw new Error("Unauthorized")
+        }
+        if (!meetingUrl) {
+            throw new Error("No meetingid present")
+        }
+        if (!name) {
+            throw new Error("No name present")
+        }
+        const savedMeeting = new Meetings({
+            MeetingsId: uuidv4(),
+            userId,
+            projectId,
+            meetingUrl,
+            name,
+            status: "Processing",
+        })
+        await savedMeeting.save()
+
+        return {
+            success: true,
+            MeetingsId: savedMeeting.MeetingsId,
+            message: "Meeting saved successfully!",
+        };
+    } catch (error) {
+        console.error("Error saving meeting:", error);
+        return {
+            success: false,
+            message: error.message || "Failed to save meeting."
+        };
+    }
+}
+
+export const fetchMeetingsProjectId = async (projectId) => {
+    const { userId } = await auth();
+    try{
+        if(!userId){
+            throw new Error("Unauthorized")
+        }
+        await connectDB()
+        const meetings=await Meetings.find({projectId}).lean();
+        return JSON.parse(JSON.stringify(meetings))
+    }catch{
+
     }
 }
 

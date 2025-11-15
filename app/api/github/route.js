@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
-import { v4 as uuidv4 } from "uuid"
 config({ path: ['.env.local', '.env'] });
+import { v4 as uuidv4 } from "uuid"
 import connectDB from "@/app/db/connectDb";
 import Project from "@/app/models/Project";
 import Commit from "@/app/models/Commit";

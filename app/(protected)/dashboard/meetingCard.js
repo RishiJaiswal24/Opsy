@@ -5,10 +5,12 @@ import { Card } from '@/components/ui/card'
 import { Presentation, Upload } from 'lucide-react'
 import React, { useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { uploadFiles } from '@/lib/upload'
 import { uploadToCloudinary } from '@/lib/uploadCloudinary'
+import { saveMeeting } from '@/app/actions/useractions'
+import { useProject } from '@/app/context/ProjectContext'
 
 const MeetingCard = () => {
+    const { currentProject, setCurrentProject } = useProject();
     const [progress, setProgress] = useState(0)
     const [isUplaoding, setIsUplaoding] = useState(false)
     const [url, setUrl] = useState("")
@@ -21,12 +23,23 @@ const MeetingCard = () => {
             const file = acceptedFiles[0];
             if (!file) return;
 
-            console.log("File:", file.name, file.size, file.type); 
+            console.log("File:", file.name, file.size, file.type);
             setIsUplaoding(true);
             setProgress(0);
 
             try {
                 const uploadedURL = await uploadToCloudinary(file, setProgress);
+                const response = await saveMeeting(currentProject?.projectId, uploadedURL, file.name);
+                const MeetingsId=response.MeetingsId;
+                try {
+                    await fetch("/api/meetingIssues", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ MeetingsId, meetingUrl: uploadedURL }),
+                    })
+                } catch {
+
+                }
                 setUrl(uploadedURL);
                 console.log("Uploaded file URL:", uploadedURL);
             } catch (err) {
@@ -72,7 +85,6 @@ const MeetingCard = () => {
                     <p className="text-sm text-gray-500 text-center">Uploading your meeting...</p>
                 </div>
             )}
-
         </Card>
     )
 }
