@@ -42,9 +42,27 @@ export const saveQuestion = async ({ projectId, question, answers, fileRefrenced
 
 // for meeitngs
 
-export const deleteMeeting=async (MeetingsId)=>{
+export const fetchIssues = async (MeetingsId) => {
+    const { userId } = await auth();
+    try{
+        if(!userId){
+            throw new Error("unauthorized")
+        }
+        if(!MeetingsId){
+            throw new Error("MeetingsId is need")
+        }
+        await connectDB()
+        const meeting=await Meetings.findOne({MeetingsId}).lean()
+        return JSON.parse(JSON.stringify(meeting))
+    }catch{
+        console.error("Error fetching issues:", err);
+        return [];
+    }
+}
+
+export const deleteMeeting = async (MeetingsId) => {
     await connectDB()
-    await Meetings.deleteOne({MeetingsId})
+    await Meetings.deleteOne({ MeetingsId })
 }
 
 export const saveMeeting = async (projectId, meetingUrl, name) => {
@@ -86,14 +104,14 @@ export const saveMeeting = async (projectId, meetingUrl, name) => {
 
 export const fetchMeetingsProjectId = async (projectId) => {
     const { userId } = await auth();
-    try{
-        if(!userId){
+    try {
+        if (!userId) {
             throw new Error("Unauthorized")
         }
         await connectDB()
-        const meetings=await Meetings.find({projectId}).lean();
+        const meetings = await Meetings.find({ projectId }).lean();
         return JSON.parse(JSON.stringify(meetings))
-    }catch{
+    } catch {
 
     }
 }

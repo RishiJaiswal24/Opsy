@@ -12,12 +12,12 @@ const page = () => {
   const [meetingProjectId, setMeetingProjectId] = useState([])
 
   const getMeetings = async () => {
-    if(!currentProject?.projectId) return ;
+    if (!currentProject?.projectId) return;
     try {
       const meetings = await fetchMeetingsProjectId(currentProject?.projectId);
       setMeetingProjectId(meetings)
-    } catch(error) {
-        console.error(error)
+    } catch (error) {
+      console.error(error)
     }
   }
 
@@ -48,9 +48,9 @@ const page = () => {
             <div>
               <div className='min-w-0'>
                 <div className='flex  gap-2'>
-                  <Link href={`/meetings/${meeting.MeetingsId}`} className='text-sm font-semibold line-clamp-1'>
+                  <div className='text-sm font-semibold line-clamp-1'>
                     {meeting.name}
-                  </Link>
+                  </div>
                   {meeting.status === "Processing" && (
                     <Badge className='bg-yellow-500 text-white'>
                       Processing...
@@ -70,11 +70,11 @@ const page = () => {
             {!(meeting.status === 'Processing') &&
               <div className='flex items-center flex-none gap-x-4'>
                 <Link href={`/meetings/${meeting.MeetingsId}`}>
-                  <Button variant='outline'>
+                  <Button variant='outline' className='cursor-pointer'>
                     View Meeting
                   </Button>
                 </Link>
-                <Button variant='destructive' onClick={() => handleDelete(meeting.MeetingsId)}>
+                <Button variant='destructive' className="cursor-pointer" onClick={() => handleDelete(meeting.MeetingsId)}>
                   Delete
                 </Button>
               </div>}
