@@ -19,6 +19,8 @@ import MDEditor from '@uiw/react-md-editor'
 import FileRefrenced from './fileRefrenced'
 import AskQuestion from './askQuestion'
 import MeetingCard from './meetingCard'
+import DeleteButton from './DeleteButton'
+import InviteButton from './InviteButton'
 // import { indexGithubRepo } from '@/app/api/github-loadier/route'
 
 const Dashboard = () => {
@@ -84,12 +86,12 @@ const Dashboard = () => {
         </div>
 
         <div className="h-4"></div>
-
-        <div>
+        {currentProject?.projectId && 
+        <div className='flex flex-row gap-2'>
           TeamMember
-          InviteButton
-          ArchiveButton
-        </div>
+          <InviteButton />
+          <DeleteButton />
+        </div>}
       </div>
       {/* ask question and meeting card formating  */}
       <div className="mt-4">

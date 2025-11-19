@@ -7,6 +7,7 @@ import Commit from "../models/Commit"
 import Question from "../models/Question"
 import Meetings from "../models/Meetings"
 import { connect } from "mongoose"
+import CodeEmbeddings from "../models/CodeEmbeddings"
 
 export const saveQuestion = async ({ projectId, question, answers, fileRefrenced }) => {
     const { userId } = await auth();
@@ -44,17 +45,17 @@ export const saveQuestion = async ({ projectId, question, answers, fileRefrenced
 
 export const fetchIssues = async (MeetingsId) => {
     const { userId } = await auth();
-    try{
-        if(!userId){
+    try {
+        if (!userId) {
             throw new Error("unauthorized")
         }
-        if(!MeetingsId){
+        if (!MeetingsId) {
             throw new Error("MeetingsId is need")
         }
         await connectDB()
-        const meeting=await Meetings.findOne({MeetingsId}).lean()
+        const meeting = await Meetings.findOne({ MeetingsId }).lean()
         return JSON.parse(JSON.stringify(meeting))
-    }catch{
+    } catch {
         console.error("Error fetching issues:", err);
         return [];
     }
@@ -117,6 +118,28 @@ export const fetchMeetingsProjectId = async (projectId) => {
 }
 
 //for dashboard
+
+// top right buttons
+export const projectDelete = async (projectId) => {
+    const { userId } = await auth();
+    try {
+        if (!userId) {
+            throw new Error("Unauthorised")
+        }
+        if (!projectId) {
+            throw new Error("Project Id is required for deletion")
+        }
+        await connectDB();
+        await CodeEmbeddings.deleteMany({ projectId })
+        await Commit.deleteMany({ projectId })
+        await Question.deleteMany({ projectId });
+        await Project.deleteOne({ projectId });
+        return { success: true };
+    } catch (error) {
+        console.error("Delete Project Error:", error);
+        throw new Error(error.message || "Error deleting project");
+    }
+}
 
 export const fetchCommitLog = async (projectId) => {
     await connectDB()

@@ -60,7 +60,7 @@ export function AppSidebar() {
     // }, [user])
     
     // useEffect(() => {
-    //     if(!user || !currentProject.projectId) return;
+    //     if(!user || !currentProject?.projectId) return;
     //     const saveLoc=`OpsyProject_${user.id}`
     //     if (currentProject) {
     //         localStorage.setItem(saveLoc, JSON.stringify(currentProject));
@@ -130,7 +130,7 @@ export function AppSidebar() {
                                                     <div className={cn(
                                                         'rounded-sm text sm border size-6 flex items-center justify-center bg-white text-primary',
                                                         {
-                                                            '!bg-primary !text-white': item.projectId == currentProject.projectId
+                                                            '!bg-primary !text-white': item.projectId == currentProject?.projectId
                                                         }
                                                     )}>
                                                         {item.name[0]}

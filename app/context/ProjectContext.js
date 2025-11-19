@@ -33,7 +33,7 @@ export const ProjectProvider = ({ children }) => {
 
   // Save to localStorage
   useEffect(() => {
-    if (!isHydrated || !user || !currentProject.projectId) return;
+    if (!isHydrated || !user || !currentProject?.projectId) return;
     
     try {
       localStorage.setItem(`OpsyProject_${user.id}`, JSON.stringify(currentProject));
