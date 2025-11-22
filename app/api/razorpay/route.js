@@ -1,0 +1,58 @@
+import { NextResponse } from "next/server";
+import crypto from "crypto";
+import connectDB from "@/app/db/connectDb";
+import User from "@/app/models/User";
+import Payment from "@/app/models/Payment";
+
+export const POST = async (req) => {
+    try {
+        await connectDB();
+
+        let form = await req.formData();
+        let body = Object.fromEntries(form);
+
+        const {
+            razorpay_payment_id,
+            razorpay_order_id,
+            razorpay_signature
+        } = body;
+
+        // 1) Find Payment
+        const payment = await Payment.findOne({ oid: razorpay_order_id });
+
+        if (!payment) {
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/billings?error=order-not-found`);
+        }
+
+        // 2) Verify Razorpay Signature
+        const generated_signature = crypto
+            .createHmac("sha256", process.env.RAZORPAY_SECRET)
+            .update(razorpay_order_id + "|" + razorpay_payment_id)
+            .digest("hex");
+
+        if (generated_signature !== razorpay_signature) {
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/billings?error=signature-failed`);
+        }
+
+        // 3) Mark Payment as Done
+        payment.done = true;
+        await payment.save();
+
+        // 4) Add Credits
+        const user = await User.findOne({ userId: payment.userId });
+
+        if (!user) {
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/billings?error=user-not-found`);
+        }
+
+        user.credits += payment.credits;
+        await user.save();
+
+        // SUCCESS REDIRECT
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/billings?success=true`);
+
+    } catch (err) {
+        console.error("Payment Verification Error:", err);
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/billings?error=server`);
+    }
+};

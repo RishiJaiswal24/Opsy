@@ -25,6 +25,7 @@ export async function GET() {
         firstName: user.firstName,
         lastName: user.lastName,
         email,
+        userId,
         profilepic: user.imageUrl,
       });
     }

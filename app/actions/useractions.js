@@ -8,6 +8,99 @@ import Question from "../models/Question"
 import Meetings from "../models/Meetings"
 import { connect } from "mongoose"
 import CodeEmbeddings from "../models/CodeEmbeddings"
+import Razorpay from "razorpay"
+import Payment from "../models/Payment"
+import User from "../models/User"
+
+//billings
+
+export const fetchNoOfPayments = async () => {
+    const { userId } = await auth();
+    try {
+        if (!userId) throw new Error("Unauthorized");
+        await connectDB()
+        const payment = await Payment.find({ userId, done: true })
+            .sort({ createdAt: -1 })   // 👈 newest first
+            .lean();
+        console.log(payment);
+        return JSON.parse(JSON.stringify(payment));
+    } catch {
+
+    }
+}
+
+
+export const fetchUserCredits = async () => {
+    const { userId } = await auth();
+    try {
+        if (!userId) throw new Error("Unauthorized");
+        await connectDB()
+        const user = await User.findOne({ userId });
+        if (!user) {
+            throw new Error("User not found")
+        }
+        const credits = user.credits
+        return {
+            success: true,
+            credits: user.credits
+        }
+    } catch (err) {
+        console.error("Failed to fetch user Credits:", err.message);
+        return {
+            success: false,
+            error: err.message,
+        };
+    }
+}
+
+
+// Razorpay intrigration
+
+export const initiate = async (amount, credits) => {
+    const { userId } = await auth();
+
+    try {
+        if (!userId) throw new Error("Unauthorized");
+        if (!amount || !credits) throw new Error("Amount and Credits are required");
+
+        await connectDB();
+
+        const instance = new Razorpay({
+            key_id: process.env.RAZORPAY_ID,
+            key_secret: process.env.RAZORPAY_SECRET,
+        });
+
+        const options = {
+            amount: parseInt(amount) * 100,  // in paise
+            currency: "INR",
+        };
+
+        const x = await instance.orders.create(options);
+
+        await Payment.create({
+            paymentId: uuidv4(),
+            userId,
+            oid: x.id,       // Razorpay Order ID
+            amount: x.amount,
+            credits,
+            status: "created"
+        });
+
+        return {
+            success: true,
+            id: x.id,
+            amount: x.amount
+        };
+    } catch (err) {
+        console.error("Razorpay initiate error:", err.message);
+        return {
+            success: false,
+            error: err.message,
+        };
+    }
+};
+
+// question saving funciton 
 
 export const saveQuestion = async ({ projectId, question, answers, fileRefrenced }) => {
     const { userId } = await auth();

@@ -3,10 +3,11 @@ import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
 const UserSchema = new Schema({
-    firstName: {type: String},
-    lastName: {type: String},
+    userId: { type: String, required: true },
+    firstName: { type: String },
+    lastName: { type: String },
     email: { type: String, required: true },
     profilepic: { type: String },
-    credits: {type: Number,default: 150},
+    credits: { type: Number, default: 50 },
 }, { timestamps: true });
 export default mongoose.models.User || model("User", UserSchema);

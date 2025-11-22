@@ -9,7 +9,12 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2, Save } from 'lucide-react'
+import { checkFileCount } from '@/app/actions/checkFileCount'
+import { StartProcessingUI } from './StartProcessingUI'
+import { ProcessingUI } from './processingUI'
 import { saveQuestion } from '@/app/actions/useractions'
+
+
 
 const AskQuestion = () => {
   const { currentProject, setCurrentProject } = useProject();
@@ -22,6 +27,51 @@ const AskQuestion = () => {
   const [answers, setAnswers] = useState("")
   const [fileRefrenced, setFileRefrenced] = useState([])
 
+  const [fileCount, setFileCount] = useState(0)
+  const [processingStatus, setProcessingStatus] = useState(null)
+
+  useEffect(() => {
+    async function init() {
+      if (!currentProject?.projectId) return;
+
+      const values = await checkFileCount(currentProject.projectId);
+
+      if (values.error) {
+        console.error(values.error);
+        return;
+      }
+
+      setFileCount(values.fileCount);
+      setProcessingStatus(values.status);
+    }
+
+    init();
+  }, [currentProject?.projectId]);
+
+  // Interval polling
+  useEffect(() => {
+    if (!currentProject?.projectId) return;
+    if (processingStatus === "completed") return;
+
+    const interval = setInterval(async () => {
+      const values = await checkFileCount(currentProject.projectId);
+
+      if (values.error) {
+        console.error(values.error);
+        return;
+      }
+
+      setFileCount(values.fileCount);
+      setProcessingStatus(values.status);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [currentProject?.projectId, processingStatus]);
+
+
+
+
+  //laad the and using RAG
   const handleAskQuestion = async (e) => {
     e.preventDefault()
     setAnswers("")
@@ -63,11 +113,22 @@ const AskQuestion = () => {
     } catch {
       console.error(err)
       alert("Something went wrong")
-    }finally{
+    } finally {
       setSaveLoading(false)
     }
   }
 
+  if (processingStatus === null) {
+    return <div className="text-center p-10">Loading project status...</div>;
+  }
+
+  if (processingStatus === "not_started") {
+    return <StartProcessingUI fileCount={fileCount} />
+  }
+
+  if (processingStatus === "processing") {
+    return <ProcessingUI fileCount={fileCount} />
+  }
   return (
     <>
       <Dialog open={isopen} onOpenChange={setIsopen}>

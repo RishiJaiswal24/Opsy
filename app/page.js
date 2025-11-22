@@ -30,6 +30,9 @@ export default function Home() {
         <li>vector embedding</li>
         <li>RAG</li>
         <li>schadcn</li>
+        <li>Cloudinary</li>
+        <li>Assembly Ai</li>
+        <li>Razorpay</li>
         <li></li>
       </ul>
     </>
