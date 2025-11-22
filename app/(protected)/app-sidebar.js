@@ -40,33 +40,6 @@ export function AppSidebar() {
     
     const [projects, setProjects] = useState([]);
     const { currentProject, setCurrentProject } = useProject();
-
-    
-    useEffect(() => {
-        console.log(projects);
-    }, [projects])
-    
-    // useEffect(() => {
-    //     console.log(currentProject);
-    // }, [currentProject])
-    
-    // useEffect(() => {
-    //     if(!user) return;
-    //     const saveLoc=`OpsyProject_${user.id}`
-    //     const saved = localStorage.getItem(saveLoc)
-    //     if (saved) {
-    //         setCurrentProject(JSON.parse(saved));
-    //     }
-    // }, [user])
-    
-    // useEffect(() => {
-    //     if(!user || !currentProject?.projectId) return;
-    //     const saveLoc=`OpsyProject_${user.id}`
-    //     if (currentProject) {
-    //         localStorage.setItem(saveLoc, JSON.stringify(currentProject));
-    //     }
-    // }, [currentProject,user])
-
     const handleProjectSelect = (project) => {
         setCurrentProject(project);
     }

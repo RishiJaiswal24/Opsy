@@ -13,8 +13,8 @@ import { checkFileCount } from '@/app/actions/checkFileCount'
 import { StartProcessingUI } from './StartProcessingUI'
 import { ProcessingUI } from './processingUI'
 import { saveQuestion } from '@/app/actions/useractions'
-
-
+import { ToastContainer, toast } from 'react-toastify'
+import { Bounce } from 'react-toastify'
 
 const AskQuestion = () => {
   const { currentProject, setCurrentProject } = useProject();
@@ -68,9 +68,6 @@ const AskQuestion = () => {
     return () => clearInterval(interval);
   }, [currentProject?.projectId, processingStatus]);
 
-
-
-
   //laad the and using RAG
   const handleAskQuestion = async (e) => {
     e.preventDefault()
@@ -106,20 +103,84 @@ const AskQuestion = () => {
         fileRefrenced,
       })
       if (response.success) {
-        alert("Question saved successfully!")
+        toast.success("Question saved successfully!", {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       } else {
-        alert(response.message || "Failed to save question")
+        toast.error(response.message || "Failed to save question", {
+          position: "bottom-left",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
       }
     } catch {
       console.error(err)
-      alert("Something went wrong")
+      toast.error('Something went wrong', {
+        position: "bottom-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     } finally {
       setSaveLoading(false)
     }
   }
 
+  if (!currentProject?.projectId) {
+  return (
+    <Card className="col-span-3 shadow-xl p-6 flex flex-col items-center text-center">
+      <h2 className="text-xl font-semibold">No Project Selected</h2>
+
+      <p className="text-gray-500 mt-3">
+        Please select a project to start asking questions.
+      </p>
+
+      <p className="text-gray-400 mt-2 text-sm">
+        You can select a project from the sidebar.
+      </p>
+    </Card>
+  );
+}
+
   if (processingStatus === null) {
-    return <div className="text-center p-10">Loading project status...</div>;
+    return <Card className="col-span-3 shadow-xl p-6 flex flex-col items-center text-center animate-pulse">
+
+      <h2 className="text-xl font-semibold text-gray-400">
+        Loading...
+      </h2>
+
+      <p className="text-gray-300 mt-3">
+        Please wait, we are checking your project details.
+      </p>
+
+      <p className="text-gray-400 font-medium mt-3">
+        Required Credits : <span className="font-bold">...</span>
+        <br />
+        Your Credits : <span className="font-bold">...</span>
+      </p>
+
+      <div className="h-10 w-32 bg-gray-300 rounded-md mt-6"></div>
+    </Card>
+
   }
 
   if (processingStatus === "not_started") {
@@ -131,6 +192,7 @@ const AskQuestion = () => {
   }
   return (
     <>
+      
       <Dialog open={isopen} onOpenChange={setIsopen}>
         <DialogContent className="max-h-[90vh] min-w-[80vw] overflow-y-auto">
           <DialogHeader>

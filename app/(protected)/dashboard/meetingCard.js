@@ -23,14 +23,13 @@ const MeetingCard = () => {
             const file = acceptedFiles[0];
             if (!file) return;
 
-            console.log("File:", file.name, file.size, file.type);
             setIsUplaoding(true);
             setProgress(0);
 
             try {
                 const uploadedURL = await uploadToCloudinary(file, setProgress);
                 const response = await saveMeeting(currentProject?.projectId, uploadedURL, file.name);
-                const MeetingsId=response.MeetingsId;
+                const MeetingsId = response.MeetingsId;
                 try {
                     await fetch("/api/meetingIssues", {
                         method: "POST",
@@ -41,7 +40,6 @@ const MeetingCard = () => {
 
                 }
                 setUrl(uploadedURL);
-                console.log("Uploaded file URL:", uploadedURL);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -49,6 +47,22 @@ const MeetingCard = () => {
             }
         }
     });
+
+    if (!currentProject?.projectId) {
+        return (
+            <Card className="col-span-2 flex flex-col justify-center items-center shadow-xl p-6 text-center">
+                <Presentation className="h-10 w-10 text-gray-400" />
+                <h3 className="mt-3 text-sm font-semibold text-gray-700">
+                    No Project Selected
+                </h3>
+                <p className="mt-1 text-xs text-gray-500">
+                    Please select a project to upload meetings.
+                </p>
+            </Card>
+        );
+    }
+
+
     return (
         <Card className='col-span-2 flex flex-col justify-center !gap-0 items-center shadow-xl transition-transform duration-300 hover:scale-[1.03]' {...getRootProps()}>
             {!isUplaoding && (

@@ -7,7 +7,7 @@ import { deleteMeeting, fetchMeetingsProjectId } from '@/app/actions/useractions
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
-const page = () => {
+const Page = () => {
   const { currentProject, setCurrentProject } = useProject();
   const [meetingProjectId, setMeetingProjectId] = useState([])
 
@@ -85,4 +85,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

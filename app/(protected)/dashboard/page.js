@@ -30,9 +30,6 @@ const Dashboard = () => {
   const [commits, setCommits] = useState([])
   const [pollLoading, setPollLoading] = useState(false)
 
-  useEffect(() => {
-    console.log(currentProject);
-  }, [currentProject])
 
   useEffect(() => {
     if (!currentProject?.projectId) return;

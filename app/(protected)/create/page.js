@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import React, { useEffect, useState } from 'react'
 import { createProject } from '@/app/actions/useractions'
+import { ToastContainer, toast } from 'react-toastify'
+import { Bounce } from 'react-toastify'
 
 const CreatePage = () => {
     const [form, setForm] = useState({
@@ -24,22 +26,67 @@ const CreatePage = () => {
             })
 
             if (response.success) {
-                alert("Project created successfully!")
+                toast.success('Project created successfully!', {
+                    position: "bottom-left",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
                 setForm({ ProjectName: "", GithubRepo: "", GithubToken: "" })
             } else {
-                alert(response.message || "Failed to create project")
+                toast.error(response.message || "Failed to create project", {
+                    position: "bottom-left",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
             }
         } catch (err) {
             console.error(err)
-            alert("Something went wrong")
+            toast.error('Something went wrong', {
+                position: "bottom-left",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+            });
         } finally {
             setLoading(false)
-            window.location.reload()
+            setTimeout(() => {
+                window.location.reload()
+            }, 1000);
         }
     }
 
     return (
         <>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+            />
             <div className='h-full flex gap-12 items-center justify-center'>
                 <img src="/github.jpeg" className='md:block hidden h-56 w-auto' alt="github" />
                 <div>

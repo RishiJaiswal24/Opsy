@@ -5,6 +5,8 @@ import { Info } from 'lucide-react'
 import Script from "next/script"
 import React, { useEffect, useState } from 'react'
 import { fetchNoOfPayments, fetchUserCredits, initiate } from '@/app/actions/useractions'
+import { ToastContainer, toast } from 'react-toastify'
+import { Bounce } from 'react-toastify'
 
 const BillingPage = () => {
   const [creditsToBuy, setCreditsToBuy] = useState([100])
@@ -19,7 +21,17 @@ const BillingPage = () => {
     if (data.success) {
       setCredits(data.credits);
     } else {
-      alert("Failed to load credits: " + data.error);
+      toast.error("Failed to load credits: " + data.error, {
+        position: "bottom-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 
@@ -65,6 +77,19 @@ const BillingPage = () => {
   }
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
       <Script src="https://checkout.razorpay.com/v1/checkout.js"></Script>
       <h1 className='text-xl font-semibold'>Billing</h1>
       <div className="h-2"></div>
