@@ -17,6 +17,11 @@ const items = [
         icon: LayoutDashboard
     },
     {
+        title: "Q&A",
+        url: '/qa',
+        icon: Bot
+    },
+    {
         title: "Meetings",
         url: '/meetings',
         icon: Presentation
@@ -25,11 +30,6 @@ const items = [
         title: "Billings",
         url: '/billings',
         icon: CreditCard
-    },
-    {
-        title: "Q&A",
-        url: '/qa',
-        icon: Bot
     },
 ]
 
@@ -65,7 +65,8 @@ export function AppSidebar() {
         <>
             <Sidebar collapsible="icon" variant="floating">
                 <SidebarHeader>
-                    Logo
+                    <div className="font-bold">Opsy</div>
+                    {/* <img src="/logo.jpeg" alt="" className="h-10 w-10 rounded-full"/> */}
                 </SidebarHeader>
                 <SidebarContent>
                     <SidebarGroup>

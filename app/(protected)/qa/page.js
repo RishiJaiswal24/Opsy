@@ -69,7 +69,7 @@ const Page = () => {
           })}
         </div>
         {question &&  (
-          <SheetContent className="overflow-y-scroll sm:max-w-[80vw]">
+          <SheetContent className="overflow-y-scroll min-w-[90vw] sm:min-w-[90vw] md:min-w-[75vw]">
               <SheetHeader>
                 <SheetTitle className='text-2xl underline'>
                   {question.question}

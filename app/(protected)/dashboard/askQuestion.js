@@ -199,7 +199,7 @@ const AskQuestion = () => {
             <DialogTitle>
               <div className='w-full justify-between'>
                 Opsy
-                <Button variant={'outline'} onClick={handleSave}> <Save /> Save Answer</Button>
+                <Button variant={'outline'} onClick={handleSave} className="ml-2"> <Save /> Save Answer</Button>
               </div>
             </DialogTitle>
           </DialogHeader>

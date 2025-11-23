@@ -42,7 +42,6 @@ const Dashboard = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ projectId: currentProject?.projectId }),
         })
-        // await indexGithubRepo(projectId,currentProject.projectUrl)
         const data = await fetchCommitLog(currentProject?.projectId);
         setCommits(data);
       } catch (err) {
@@ -65,27 +64,32 @@ const Dashboard = () => {
   }
   return (
     <div className='h-full'>
-      {/* <div>{currentProject.projectId}</div> */}
-      <div className='flex items-center justify-between flex-wrap gap-y-4'>
+
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         {/* Github */}
-        <div className='w-fit rounded-md bg-primary px-4 py-3 flex'>
-          <Github className='size-5 text-white' />
-          <div className='ml-2'>
-            <p className=' flex gap-2 text-sm font-medium  text-white '>
-              This project is linked to {' '}
-              <Link href={currentProject?.projectUrl ?? ""} className='flex hover:underline' target='_blank'>
-                <span>{currentProject?.projectUrl}</span>
-                <ExternalLink className='ml-1 size-5' />
+        <div className="w-fit rounded-md bg-primary px-4 py-3 flex">
+          <Github className="size-5 text-white" />
+          <div className="ml-2">
+            <p className="flex gap-2 text-sm font-medium text-white">
+              This project is linked to{' '}
+              <Link
+                href={currentProject?.projectUrl ?? ""}
+                className="flex hover:underline"
+                target="_blank"
+              >
+                <span className="hidden lg:block">
+                  {currentProject?.projectUrl}
+                </span>
+                <ExternalLink className="ml-1 size-5" />
               </Link>
             </p>
           </div>
         </div>
 
-        <div className="h-4"></div>
-        {currentProject?.projectId &&
-          <DeleteButton />
-        }
+        {/* Spacer NOT needed */}
+        {currentProject?.projectId && <DeleteButton />}
       </div>
+
       {/* ask question and meeting card formating  */}
       <div className="mt-4">
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-5'>
