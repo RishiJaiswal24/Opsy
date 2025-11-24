@@ -47,10 +47,12 @@ const BillingPage = () => {
     run();
   }, []);
 
+  // In BillingPage component
   const pay = async (amount) => {
-    const paisa =amount *100;
+    const paisa = amount * 100;
     let a = await initiate(paisa, creditsToBuyAmount)
     let order_id = a.id
+
     var options = {
       "key": process.env.NEXT_PUBLIC_RAZORPAY_ID,
       "amount": amount,
@@ -59,8 +61,56 @@ const BillingPage = () => {
       "description": "Support Contribution",
       "image": "https://example.com/your_logo",
       "order_id": order_id,
-      "callback_url": `${process.env.NEXT_PUBLIC_URL}/api/razorpay`,
-      "redirect": true,  
+      // ❌ Remove callback_url - it causes Clerk issues
+      // "callback_url": `${process.env.NEXT_PUBLIC_URL}/api/razorpay`,
+      // "redirect": true,
+
+      // ✅ Use handler instead
+      "handler": function (response) {
+        // Send payment details to your API
+        fetch('/api/razorpay/verify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+          }),
+        })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              toast.success("Payment successful! Credits added.", {
+                position: "bottom-left",
+                autoClose: 3000,
+                theme: "light",
+                transition: Bounce,
+              });
+              // Refresh credits
+              showCredits();
+              // Optionally reload payments list
+              window.location.reload();
+            } else {
+              toast.error("Payment verification failed: " + data.error, {
+                position: "bottom-left",
+                autoClose: 5000,
+                theme: "light",
+                transition: Bounce,
+              });
+            }
+          })
+          .catch(err => {
+            toast.error("Error processing payment", {
+              position: "bottom-left",
+              autoClose: 5000,
+              theme: "light",
+              transition: Bounce,
+            });
+          });
+      },
+
       "prefill": {
         "name": "Gaurav Kumar",
         "email": "gaurav.kumar@example.com",
@@ -72,8 +122,8 @@ const BillingPage = () => {
       "theme": {
         "color": "#3399cc"
       }
-
     };
+
     var rzp1 = new Razorpay(options);
     rzp1.open();
   }
