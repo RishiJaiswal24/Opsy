@@ -65,13 +65,13 @@ const Dashboard = () => {
   return (
     <div className='h-full'>
 
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex  items-start sm:items-center justify-between gap-4">
         {/* Github */}
         <div className="w-fit rounded-md bg-primary px-4 py-3 flex">
           <Github className="size-5 text-white" />
           <div className="ml-2">
             <p className="flex gap-2 text-sm font-medium text-white">
-              This project is linked to{' '}
+              Project linked to{' '}
               <Link
                 href={currentProject?.projectUrl ?? ""}
                 className="flex hover:underline"
@@ -86,7 +86,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Spacer NOT needed */}
         {currentProject?.projectId && <DeleteButton />}
       </div>
 

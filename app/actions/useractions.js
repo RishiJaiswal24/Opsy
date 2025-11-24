@@ -67,11 +67,11 @@ export const initiate = async (amount, credits) => {
 
         const instance = new Razorpay({
             key_id: process.env.RAZORPAY_ID,
-            key_secret: process.env.RAZORPAY_SECRET,
+            key_secret: process.env.RAZORPAY_SECRET, 
         });
 
         const options = {
-            amount: parseInt(amount) * 100,  // in paise
+            amount,  // in paise
             currency: "INR",
         };
 

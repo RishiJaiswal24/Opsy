@@ -1,26 +1,27 @@
 # 🚀 Opsy
 
 > **AI-Powered Developer Productivity Platform**  
-> Analyze commits, chat with your codebase, and summarize meetings — all in one place.
+> A college project exploring AI capabilities - analyze commits, chat with your codebase, and summarize meetings!
 
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://opsy-sable.vercel.app/dashboard)
 [![Tech Stack](https://img.shields.io/badge/stack-MERN-blue)]()
-[![License](https://img.shields.io/badge/license-MIT-green)]()
 
 [**🌐 Try Opsy Now**](https://opsy-sable.vercel.app/dashboard)
 
 ---
 
-## 📖 Overview
+## 📖 About This Project
 
-**Opsy** is an AI-driven development tool that helps developers understand their repositories better, stay on top of changes, and manage meeting notes — all through intelligent automation and natural language processing.
+**Opsy** is a learning project I built as a college student to explore AI integration in developer tools. It helps developers understand repositories better, track changes, and manage meeting notes through intelligent automation and natural language processing.
 
-### ✨ Key Features
+> **Note:** This is an educational project created to learn about AI, full-stack development, and modern web technologies. Feel free to explore, fork, and learn from it!
+
+### ✨ What It Does
 
 - 🔍 **Smart Commit Analysis** - Get AI-generated summaries of commit history
 - 💬 **Chat with Your Codebase** - Ask questions about any GitHub repository using RAG
 - 🎧 **Meeting Summarizer** - Upload audio files and get instant summaries with action items
-- 💳 **Credit-Based System** - Fair usage model with flexible credit purchasing
+- 💳 **Credit-Based System** - Simple usage model with credit purchasing (using Razorpay test mode)
 
 ---
 
@@ -42,7 +43,7 @@ Transform your commit history into readable, human-friendly summaries.
 
 ### 2️⃣ Repository Knowledge Base (RAG-Powered Q&A)
 
-The flagship feature — chat with your entire codebase like it's ChatGPT.
+The main feature — chat with your entire codebase like it's ChatGPT.
 
 **Process Flow:**
 
@@ -88,22 +89,22 @@ Upload meeting recordings and get instant, structured summaries.
 
 ---
 
-### 4️⃣ Credits System & Monetization
+### 4️⃣ Credits System
 
-Fair usage model that keeps the platform sustainable.
+Simple usage model to manage API costs fairly.
 
 #### 🎁 Free Tier
 - **50 free credits** on signup
 - Enough to explore all features
 
-#### 💰 Pricing
+#### 💰 Credit Usage
 - **Repository Indexing**: 1 credit per file processed
 - **Questions**: Configurable credit cost
 - **Meetings**: Custom credit allocation
 
 #### 💳 Purchasing Credits
-- Integrated with **Razorpay** (test mode currently active)
-- Secure payment processing
+- Integrated with **Razorpay** (currently in test mode for learning purposes)
+- Mock payment processing for demonstration
 - Instant credit top-up
 - Transaction history stored in MongoDB
 
@@ -136,7 +137,7 @@ Clerk account
 Gemini API key
 AssemblyAI API key
 Cloudinary account
-Razorpay account
+Razorpay account (for test mode)
 ```
 
 ### Installation
@@ -222,26 +223,23 @@ NEXT_PUBLIC_URL=http://localhost:3000
 
 ---
 
-## 💡 Use Cases
+## 💡 Learning Outcomes
 
-### For Developers
-- Quickly understand unfamiliar codebases
-- Generate changelogs from commit history
-- Document meeting decisions instantly
+Building this project helped me learn:
 
-### For Teams
-- Onboard new developers faster
-- Maintain better documentation
-- Keep meeting notes organized
-
-### For Open Source Maintainers
-- Help contributors navigate large repositories
-- Explain architectural decisions
-- Reduce repetitive questions
+- **RAG Implementation**: Understanding vector embeddings and similarity search
+- **AI Integration**: Working with multiple AI APIs (Gemini, AssemblyAI)
+- **Full-Stack Development**: Building a complete MERN application
+- **Payment Integration**: Implementing Razorpay for transactions
+- **Authentication**: Using Clerk for secure OAuth and user management
+- **Cloud Services**: Managing file uploads with Cloudinary
+- **Database Design**: Structuring MongoDB schemas for complex data
 
 ---
 
-## 🗺️ Roadmap
+## 🗺️ Future Ideas
+
+Things I'd like to add when I get time:
 
 - [ ] Support for more AI providers (OpenAI, Claude)
 - [ ] Code generation from questions
@@ -250,13 +248,12 @@ NEXT_PUBLIC_URL=http://localhost:3000
 - [ ] Multi-repository knowledge base
 - [ ] Team collaboration features
 - [ ] API access for developers
-- [ ] Custom credit packages
 
 ---
 
-## 🤝 Contributing
+## 🤝 Want to Contribute or Learn?
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+This is a learning project, and I'm open to collaborations! If you're a student or developer wanting to explore AI integration:
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
@@ -264,37 +261,37 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Feel free to reach out if you have questions or want to discuss the implementation!
 
 ---
 
-## 🙏 Acknowledgments
+## Technologies & Resources Used
 
-- [Gemini AI](https://ai.google.dev/) for embeddings and chat
-- [AssemblyAI](https://www.assemblyai.com/) for transcription
-- [Clerk](https://clerk.com/) for authentication
-- [shadcn/ui](https://ui.shadcn.com/) for beautiful components
-- [LangChain](https://www.langchain.com/) for RAG infrastructure
+This project wouldn't be possible without these amazing tools:
+
+- [Gemini AI](https://ai.google.dev/) for embeddings and chat capabilities
+- [AssemblyAI](https://www.assemblyai.com/) for audio transcription
+- [Clerk](https://clerk.com/) for authentication infrastructure
+- [shadcn/ui](https://ui.shadcn.com/) for beautiful UI components
+- [LangChain](https://www.langchain.com/) for RAG implementation
+- [Vercel](https://vercel.com/) for hosting and deployment
 
 ---
 
-## 📧 Contact
+## 📧 Connect With Me
 
-Built with ❤️ by [Your Name]
+Built as a learning project by Rishi Jaiswal 🎓
 
-- Website: [opsy-sable.vercel.app](https://opsy-sable.vercel.app/dashboard)
-- Twitter: [@__Rishiiii__
-](https://x.com/__Rishiiii__)
-- Email: rishijaiswal249@gmail.com
+- **Live Demo**: [opsy-sable.vercel.app](https://opsy-sable.vercel.app/dashboard)
+- **Twitter**: [@__Rishiiii__](https://x.com/__Rishiiii__)
+- **Email**: rishijaiswal249@gmail.com
 
 ---
 
 <div align="center">
 
-**If you find Opsy useful, please consider giving it a ⭐️!**
+**If you find this project interesting or helpful for learning, consider giving it a ⭐️!**
+
+*Made with ❤️ and lots of coffee ☕*
 
 </div>

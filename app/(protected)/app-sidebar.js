@@ -1,5 +1,4 @@
 "use client"
-
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import { Bot, CreditCard, LayoutDashboard, Plus, Presentation } from "lucide-react"
@@ -9,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { useUser } from "@clerk/nextjs"
 import { useProject } from "../context/ProjectContext"
+import { useRouter } from "next/navigation"
 
 const items = [
     {
@@ -34,10 +34,11 @@ const items = [
 ]
 
 export function AppSidebar() {
+    const router = useRouter()
     const pathname = usePathname();
     const { open } = useSidebar();
     const { user } = useUser();
-    
+
     const [projects, setProjects] = useState([]);
     const { currentProject, setCurrentProject } = useProject();
     const handleProjectSelect = (project) => {
@@ -60,6 +61,11 @@ export function AppSidebar() {
         };
         loadProjects();
     }, []);
+
+    const handleProjectClick = (item) => {
+        handleProjectSelect(item);
+        router.push("/dashboard"); // navigate to dashboard
+    };
 
     return (
         <>
@@ -100,19 +106,27 @@ export function AppSidebar() {
                                     return (
                                         <SidebarMenuItem key={item.projectId}>
                                             <SidebarMenuButton asChild>
-                                                <div className="cursor-pointer" onClick={() => handleProjectSelect(item)}>
-                                                    <div className={cn(
-                                                        'rounded-sm text sm border size-6 flex items-center justify-center bg-white text-primary',
-                                                        {
-                                                            '!bg-primary !text-white': item.projectId == currentProject?.projectId
-                                                        }
-                                                    )}>
+                                                <button
+                                                    className="w-full cursor-pointer flex items-center gap-2"
+                                                    onClick={() => handleProjectClick(item)}
+                                                >
+                                                    <div
+                                                        className={cn(
+                                                            "rounded-sm text sm border size-6 flex items-center justify-center bg-white text-primary",
+                                                            {
+                                                                "!bg-primary !text-white":
+                                                                    item.projectId == currentProject?.projectId,
+                                                            }
+                                                        )}
+                                                    >
                                                         {item.name[0]}
                                                     </div>
+
                                                     {open && <span>{item.name}</span>}
-                                                </div>
+                                                </button>
                                             </SidebarMenuButton>
                                         </SidebarMenuItem>
+
                                     )
                                 })}
                                 <div className="h-2"></div>

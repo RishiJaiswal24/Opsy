@@ -48,7 +48,8 @@ const BillingPage = () => {
   }, []);
 
   const pay = async (amount) => {
-    let a = await initiate(amount, creditsToBuyAmount)
+    const paisa =amount *100;
+    let a = await initiate(paisa, creditsToBuyAmount)
     let order_id = a.id
     var options = {
       "key": process.env.NEXT_PUBLIC_RAZORPAY_ID,
