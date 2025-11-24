@@ -60,6 +60,7 @@ const BillingPage = () => {
       "image": "https://example.com/your_logo",
       "order_id": order_id,
       "callback_url": `${process.env.NEXT_PUBLIC_URL}/api/razorpay`,
+      "redirect": true,  
       "prefill": {
         "name": "Gaurav Kumar",
         "email": "gaurav.kumar@example.com",

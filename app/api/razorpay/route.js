@@ -49,7 +49,7 @@ export const POST = async (req) => {
         await user.save();
 
         // SUCCESS REDIRECT
-        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/billings`);
+        return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/billings?success=true`);
 
     } catch (err) {
         console.error("Payment Verification Error:", err);
