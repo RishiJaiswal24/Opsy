@@ -1,5 +1,5 @@
 import { GithubRepoLoader } from '@langchain/community/document_loaders/web/github';
-import { getEmbeddings, summariseCode } from '../gemini/route';
+import { getEmbeddings, summariseCode, summariseCodeBatch } from '../gemini/route';
 import connectDB from '@/app/db/connectDb';
 import CodeEmbeddings from '@/app/models/CodeEmbeddings';
 
@@ -14,12 +14,12 @@ async function safeCall(fn, ...args) {
             if (err.message.includes("429") || err.message.includes("Too Many Requests")) {
                 console.warn(" Gemini rate limit hit. Waiting 60s before retry...");
                 await sleep(60000);
+                retries--;
             } else {
                 console.error("Gemini API call failed:", err.message);
                 throw err;
             }
         }
-        retries--;
     }
     throw new Error("Gemini call failed after multiple retries");
 }
@@ -49,11 +49,6 @@ export const loadGithubRepo = async (githubUrl, githubToken) => {
             'public/*', 'assets/*', 'images/*',
             '*.svg', '*.png', '*.jpg', '*.jpeg', '*.ico', '*.gif', '*.mp4', '*.webp', '*.pdf', '*.woff*', '*.ttf',
 
-            // Docs / text
-            'README.*', 'readme.*', 'LICENSE', 'LICENSE.*', 'CONTRIBUTING.*',
-            'CHANGELOG.*', 'CODE_OF_CONDUCT.*', 'SECURITY.*',
-            '*.md', '*.txt', '*.rst',
-
             // Tests / mocks
             '__tests__/*', 'tests/*', '*.spec.*', '*.test.*', 'mock/*', 'mocks/*', 'fixtures/*',
 
@@ -76,17 +71,15 @@ export const loadGithubRepo = async (githubUrl, githubToken) => {
     return docs;
 };
 
-
+// main function
 export const indexGithubRepo = async (projectId, githubUrl, githubToken) => {
     console.log(` Starting index for repo: ${githubUrl}`);
     const docs = await loadGithubRepo(githubUrl, githubToken);
 
     const allEmbeddings = await generateEmbeddings(docs);
 
-    console.log(" Connecting to MongoDB...");
     await connectDB();
 
-    console.log(" Storing embeddings in DB...");
     await Promise.allSettled(
         allEmbeddings.map(async (embedding, index) => {
             if (!embedding) return;
@@ -110,26 +103,34 @@ export const indexGithubRepo = async (projectId, githubUrl, githubToken) => {
 
 const generateEmbeddings = async (docs) => {
     const results = [];
+    const chunks = []
+    // creating chunks of the docs for processing
+    for (let i = 0; i < docs.length; i += 10) {
+        chunks.push(docs.slice(i, i + 10));
+    }
 
-    for (let i = 0; i < docs.length; i++) {
-        const doc = docs[i];
-        console.log(`🔹 Processing file ${i + 1}/${docs.length}: ${doc.metadata.source}`);
-
+    for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
+        console.log(`🔹 Processing chunk ${i + 1}/${chunks.length}`);
         try {
-            const summary = await safeCall(summariseCode, doc);
-            const embedding = await safeCall(getEmbeddings, summary);
+            const summaries = await safeCall(summariseCodeBatch, chunk);
 
-            results.push({
-                summary,
-                embedding,
-                sourceCode: JSON.parse(JSON.stringify(doc.pageContent)),
-                fileName: doc.metadata.source,
-            });
+            for (let j = 0; j < summaries.length; j++) {
+                let n = summaries.length - 1 - j;
 
-            await sleep(6000);
-
+                const item = summaries[j];
+                const doc = chunk[j];
+                const embedding = await safeCall(getEmbeddings, item.summary);
+                results.push({
+                    summary: item.summary,
+                    embedding,
+                    sourceCode: JSON.parse(JSON.stringify(doc.pageContent)),
+                    fileName: item.fileName
+                })
+            }
+            await sleep(12000);
         } catch (err) {
-            console.error(` Failed for ${doc.metadata.source}:`, err.message);
+            console.error(`Failed for chunk ${i + 1}:`, err.message);
         }
     }
 

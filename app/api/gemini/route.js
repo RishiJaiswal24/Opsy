@@ -1,12 +1,10 @@
 import { config } from 'dotenv';
 config({ path: ['.env.local', '.env'] });
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
-const genAI = new GoogleGenerativeAI(process.env.AI_KEY);
-
-const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash'
-})
+const ai = new GoogleGenAI({
+    apiKey: process.env.AI_KEY,
+});
 
 export const aiSummariseCommit = async (diff) => {
     const prompt = `You are an expert programmer summarizing a git diff.
@@ -36,41 +34,98 @@ Now summarize this diff:
 
 ${diff}`;
 
-    const response = await model.generateContent([prompt]);
-    return response.response.text();
+    const response = await ai.models.generateContent({
+        model: "gemini-3.1-flash-lite",
+        contents: prompt,
+    });
+
+    return response.text;
 };
 
+export const summariseCodeBatch = async (docsBatch) => {
+    console.log(`getting summary of batch of ${docsBatch.length} files`);
+    const filedata = docsBatch.map((doc, index) => ({
+        index: index + 1,
+        fileName: doc.metadata.source,
+        code: doc.pageContent.slice(0, 10000)
+    }));
+    const response = await ai.models.generateContent({
+        model: "gemini-3.1-flash-lite",
+        contents: `
+You are a senior software engineer onboarding a junior developer.
+You will be given MULTIPLE source files.
+Your task is to summarize EACH file clearly and concisely.
 
+### Instructions:
+- Analyze each file independently
+- Do NOT mention that this is AI-generated
+- Do NOT repeat the code    
+- Keep each summary under 500 words
+- Return ONLY valid JSON
+- The output MUST be an array
+- Preserve the fileName exactly as provided
+- Do NOT add extra keys
+
+### Input files:
+${JSON.stringify(filedata, null, 2)}
+
+### Output format (STRICT):
+[
+  {
+    "fileName": "example.js",
+    "summary": "Short explanation of what this file does"
+  }
+]
+`,
+    });
+
+    const raw = response.text;
+    const cleaned = raw
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+
+    return JSON.parse(cleaned);
+}
 export const summariseCode = async (doc) => {
-    console.log("getting summary for ", doc.metadata.source);
+    console.log("getting summary for", doc.metadata.source);
+
     const code = doc.pageContent.slice(0, 10000);
-    const response = await model.generateContent([
-        `You are an intelligent senior software engineer who specialises in onboarding junior software engineers onto projects. 
-You are onboarding a junior software engineer and explaining to them the purpose of the ${doc.metadata.source} file. 
+
+    const response = await ai.models.generateContent({
+        model: "gemini-3.1-flash-lite",
+        contents: `You are an intelligent senior software engineer who specialises in onboarding junior software engineers onto projects.
+You are onboarding a junior software engineer and explaining to them the purpose of the ${doc.metadata.source} file.
 
 Here is the code:
 ---
 ${code}
 ---
-Give a summary no more than 100 words of the code above.`
-    ]);
-    return response.response.text()
-}
+
+Give a summary no more than 100 words of the code above.`,
+    });
+
+    return response.text;
+};
 
 export const getEmbeddings = async (summary) => {
-    const model = genAI.getGenerativeModel({ model: "text-embedding-004" })
-    const result = await model.embedContent(summary);
-    const embedding = result.embedding
-    return embedding.values
-}
+    const result = await ai.models.embedContent({
+        model: "gemini-embedding-2",
+        contents: summary,
+    });
+
+    return result.embeddings[0].values;
+};
 
 export const getQuerySummary = async (context, question) => {
-    const response = await model.generateContent([`
+    const response = await ai.models.generateContent({
+        model: "gemini-3.1-flash-lite",
+        contents: `
 You are an AI code assistant who answers questions about the codebase. Your target audience is a technical intern seeking to understand the codebase.
 
 The AI assistant is a powerful, human-like intelligence with expert knowledge, helpfulness, cleverness, and articulateness. It is well-behaved, well-mannered, friendly, kind, and inspiring, providing vivid and thoughtful responses.
 
-The assistant should take into account any CONTEXT BLOCK provided between the markers below.
+The assistant should take into account any CONTEXT BLOCK provided between the markers below.    
 
 START CONTEXT BLOCK
 ${context}
@@ -81,14 +136,14 @@ ${question}
 END OF QUESTION
 
 Behavior and constraints:
-- Responses must be between **100 words** — con  cise yet complete.
+- Responses must be between **100 words** — concise yet complete.
 - If the CONTEXT BLOCK provides the answer, base your response only on that context.
 - If the CONTEXT BLOCK does NOT provide the answer, respond exactly with: "I'm sorry, but I don't know the answer."
 - Do not invent or assume facts not supported by the CONTEXT BLOCK.
 - Use Markdown formatting (headings, bullets, code fences where relevant).
 - Be professional, clear, and encouraging — suitable for mentoring a technical intern.
+`,
+    });
 
-    `])
-
-    return response.response.text();
-}
+    return response.text;
+};

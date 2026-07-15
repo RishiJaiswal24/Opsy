@@ -10,6 +10,8 @@ const google = createGoogleGenerativeAI({
 });
 
 function cosineSimilarity(a, b) {
+  console.log("Query embedding:", a.length);
+  console.log("Stored embedding:", b.length);
   if (a.length !== b.length) throw new Error("Embedding dimensions must match");
   const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
   const normA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));

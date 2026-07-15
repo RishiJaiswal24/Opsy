@@ -7,6 +7,6 @@ const CodeEmbeddingsSchema = new Schema({
     fileName: { type: String, required: true },
     summary: { type: String, required: true },
     projectId: { type: String, required: true },
-    summaryEmbedding: { type: [Number], required: true },
+    summaryEmbedding: { type: [Number] },
 }, { timestamps: true });
 export default mongoose.models.CodeEmbeddings || model("CodeEmbeddings", CodeEmbeddingsSchema);
